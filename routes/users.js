@@ -5,7 +5,7 @@ const User = require('../models/User');
 
 // Get all users
 router.get('/', async (req, res) => {
-  const users = await User.find();
+  const users = await User.find().select('-password'); // exclude password field
   res.json(users);
 });
 

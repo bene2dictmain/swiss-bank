@@ -7,7 +7,7 @@ const app = express();
 connectDB();
 
 app.use(cors({
-  origin: 'http://127.0.0.1:5500', // or wherever your frontend is served from
+  origin: ['http://127.0.0.1:5500', 'https://the-swiss-bank.netlify.app'], // or wherever your frontend is served from
   allowedHeaders: ['Authorization', 'Content-Type'],
 }));
 app.use(bodyParser.json());

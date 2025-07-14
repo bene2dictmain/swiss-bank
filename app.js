@@ -17,4 +17,14 @@ app.use('/api/users', require('./routes/users'));
 
 
 const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Export for Vercel if in production
+if (process.env.NODE_ENV === 'production') {
+  module.exports.handler = serverless(app);
+} else {
+  // Local development mode
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Dev server running at http://localhost:${PORT}`);
+  });
+}

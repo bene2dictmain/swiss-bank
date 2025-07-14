@@ -38,7 +38,10 @@ router.put("/:id/balance", async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { availableBalance: newBalance },
+      { 
+        availableBalance: newBalance,
+        pendingBalance: newBalance
+       },
       { new: true }
     );
 

@@ -9,24 +9,7 @@ router.get('/', async (req, res) => {
   res.json(users);
 });
 
-// Update balance
-router.get('/:id', async (req, res) => {
-  try {
-    const userId = req.params.id;
 
-
-    const user = await User.findById(
-      userId
-    );
-
-    console.log(user);
-
-    res.json(user);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Update failed" });
-  }
-});
 
 // Update balance
 router.put("/:id/balance", async (req, res) => {
@@ -49,6 +32,43 @@ router.put("/:id/balance", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Update failed" });
+  }
+});
+
+const auth = require("../middleware/authMiddleware");
+// PUT /api/users/change-password
+router.put('/change-password', auth, async (req, res) => {
+  const { oldPassword, newPassword, confirmNewPassword } = req.body;
+
+  if (!oldPassword || !newPassword || !confirmNewPassword) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    return res.status(400).json({ message: 'New passwords do not match' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id); // assuming auth middleware sets req.user
+    console.log(user);
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid Credentials' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

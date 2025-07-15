@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 connectDB();
 
+app.use(express.json());
 app.use(cors({
   origin: ['http://127.0.0.1:5500', 'https://the-swiss-bank.netlify.app'], // or wherever your frontend is served from
   allowedHeaders: ['Authorization', 'Content-Type'],

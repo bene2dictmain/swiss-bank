@@ -1,6 +1,7 @@
 // routes/users.js
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 // Get all users
@@ -52,7 +53,7 @@ router.put('/change-password', auth, async (req, res) => {
     const user = await User.findById(req.user.id); // assuming auth middleware sets req.user
     console.log(user);
 
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return res.status(404).json({ user, message: 'User not found' });
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
